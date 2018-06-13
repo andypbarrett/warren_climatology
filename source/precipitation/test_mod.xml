@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <thredds:catalog xmlns:thredds="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 xmlns:bes="http://xml.opendap.org/ns/bes/1.0#">
+   <thredds:service name="dap" serviceType="OPeNDAP" base="/opendap/hyrax"/>
+   <thredds:service name="file" serviceType="HTTPServer" base="/opendap/hyrax"/>
+        <thredds:dataset name="/MERRA/MAT1NXFLX.5.2.0" ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/">
+            <thredds:catalogRef name="1979" xlink:href="1979/catalog.xml" xlink:title="1979"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1979/"/>
+            <thredds:catalogRef name="1980" xlink:href="1980/catalog.xml" xlink:title="1980"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1980/"/>
+            <thredds:catalogRef name="1981" xlink:href="1981/catalog.xml" xlink:title="1981"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1981/"/>
+            <thredds:catalogRef name="1982" xlink:href="1982/catalog.xml" xlink:title="1982"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1982/"/>
+            <thredds:catalogRef name="1983" xlink:href="1983/catalog.xml" xlink:title="1983"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1983/"/>
+            <thredds:catalogRef name="1984" xlink:href="1984/catalog.xml" xlink:title="1984"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1984/"/>
+            <thredds:catalogRef name="1985" xlink:href="1985/catalog.xml" xlink:title="1985"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1985/"/>
+            <thredds:catalogRef name="1986" xlink:href="1986/catalog.xml" xlink:title="1986"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1986/"/>
+            <thredds:catalogRef name="1987" xlink:href="1987/catalog.xml" xlink:title="1987"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1987/"/>
+            <thredds:catalogRef name="1988" xlink:href="1988/catalog.xml" xlink:title="1988"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1988/"/>
+            <thredds:catalogRef name="1989" xlink:href="1989/catalog.xml" xlink:title="1989"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1989/"/>
+            <thredds:catalogRef name="1990" xlink:href="1990/catalog.xml" xlink:title="1990"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1990/"/>
+            <thredds:catalogRef name="1991" xlink:href="1991/catalog.xml" xlink:title="1991"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1991/"/>
+            <thredds:catalogRef name="1992" xlink:href="1992/catalog.xml" xlink:title="1992"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1992/"/>
+            <thredds:catalogRef name="1993" xlink:href="1993/catalog.xml" xlink:title="1993"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1993/"/>
+            <thredds:catalogRef name="1994" xlink:href="1994/catalog.xml" xlink:title="1994"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1994/"/>
+            <thredds:catalogRef name="1995" xlink:href="1995/catalog.xml" xlink:title="1995"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1995/"/>
+            <thredds:catalogRef name="1996" xlink:href="1996/catalog.xml" xlink:title="1996"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1996/"/>
+            <thredds:catalogRef name="1997" xlink:href="1997/catalog.xml" xlink:title="1997"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1997/"/>
+            <thredds:catalogRef name="1998" xlink:href="1998/catalog.xml" xlink:title="1998"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1998/"/>
+            <thredds:catalogRef name="1999" xlink:href="1999/catalog.xml" xlink:title="1999"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/1999/"/>
+            <thredds:catalogRef name="2000" xlink:href="2000/catalog.xml" xlink:title="2000"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2000/"/>
+            <thredds:catalogRef name="2001" xlink:href="2001/catalog.xml" xlink:title="2001"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2001/"/>
+            <thredds:catalogRef name="2002" xlink:href="2002/catalog.xml" xlink:title="2002"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2002/"/>
+            <thredds:catalogRef name="2003" xlink:href="2003/catalog.xml" xlink:title="2003"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2003/"/>
+            <thredds:catalogRef name="2004" xlink:href="2004/catalog.xml" xlink:title="2004"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2004/"/>
+            <thredds:catalogRef name="2005" xlink:href="2005/catalog.xml" xlink:title="2005"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2005/"/>
+            <thredds:catalogRef name="2006" xlink:href="2006/catalog.xml" xlink:title="2006"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2006/"/>
+            <thredds:catalogRef name="2007" xlink:href="2007/catalog.xml" xlink:title="2007"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2007/"/>
+            <thredds:catalogRef name="2008" xlink:href="2008/catalog.xml" xlink:title="2008"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2008/"/>
+            <thredds:catalogRef name="2009" xlink:href="2009/catalog.xml" xlink:title="2009"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2009/"/>
+            <thredds:catalogRef name="2010" xlink:href="2010/catalog.xml" xlink:title="2010"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2010/"/>
+            <thredds:catalogRef name="2011" xlink:href="2011/catalog.xml" xlink:title="2011"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2011/"/>
+            <thredds:catalogRef name="2012" xlink:href="2012/catalog.xml" xlink:title="2012"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2012/"/>
+            <thredds:catalogRef name="2013" xlink:href="2013/catalog.xml" xlink:title="2013"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2013/"/>
+            <thredds:catalogRef name="2014" xlink:href="2014/catalog.xml" xlink:title="2014"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2014/"/>
+            <thredds:catalogRef name="2015" xlink:href="2015/catalog.xml" xlink:title="2015"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2015/"/>
+            <thredds:catalogRef name="2016" xlink:href="2016/catalog.xml" xlink:title="2016"
+                          xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/2016/"/>
+            <thredds:catalogRef name="doc" xlink:href="doc/catalog.xml" xlink:title="doc" xlink:type="simple"
+                          ID="/opendap/hyrax/MERRA/MAT1NXFLX.5.2.0/doc/"/>
+        </thredds:dataset>
+    </thredds:catalog>
