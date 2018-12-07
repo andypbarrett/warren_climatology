@@ -258,7 +258,7 @@ FUNCTION READ_CTL, ctlfile
     
     READF, U, line
     tag = (STRSPLIT(line, /EXTRACT))[0]
-
+    
     CASE 1 OF
        STREGEX(tag, '^[XYZ]DEF', /BOOLEAN, /FOLD_CASE): BEGIN
           struct = CREATE_STRUCT(struct, tag, PARSE_XYZCOORD(line))
@@ -274,10 +274,11 @@ FUNCTION READ_CTL, ctlfile
              IF STREGEX(line, '^ENDVARS', /BOOLEAN, /FOLD_CASE) THEN BREAK
              vartag = (STRSPLIT(line,/EXTRACT))[0]
              IF ivar EQ 0 THEN BEGIN
-                varstruct = CREATE_STRUCT(vartag, PARSE_VAR(line))
+                varstruct = CREATE_STRUCT('_'+vartag, PARSE_VAR(line))
              ENDIF ELSE BEGIN
                 varstruct = CREATE_STRUCT(varstruct, vartag, PARSE_VAR(line))
              ENDELSE
+             ivar = ivar+1
           ENDWHILE
           struct = CREATE_STRUCT(struct, 'VARIABLES', varstruct)
        END
@@ -384,7 +385,7 @@ END
 
 FUNCTION READ_DATA, gradsfile, ctl_struct
 
-  dims = [ctl_struct.xdef.num, ctl_struct.ydef.num, ctl_struct.tdef.num]
+  dims = [ctl_struct.xdef.num, ctl_struct.ydef.num, ctl_struct.nvars, ctl_struct.tdef.num]
   dims = dims[WHERE(dims GT 1)]
 
   data = MAKE_ARRAY(dims, /FLOAT)
@@ -452,10 +453,10 @@ FUNCTION READ_GRADS, gradsfile, CTL_FILE=ctl_file, CTL_STRUCT=ctl_struct
 
   ctl_struct = READ_CTL(ctl_file)
 
-  IF (ctl_struct.nvars GT 1) THEN BEGIN
-     PRINT, '% READ_GRADS: Currently only reads files with one variable'
-     RETURN, -1
-  ENDIF
+  ;IF (ctl_struct.nvars GT 1) THEN BEGIN
+  ;   PRINT, '% READ_GRADS: Currently only reads files with one variable'
+  ;   RETURN, -1
+  ;ENDIF
 
   IF (ctl_struct.zdef.num GT 1) THEN BEGIN
      PRINT, '% READ_GRADS: Currently only reads files with 3D grids (x,y,t)'

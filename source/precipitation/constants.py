@@ -11,8 +11,8 @@ filepath = {
                       'ffmt': 'CFSR2.flxf06.gdas.{:s}.{}??.nc'},
             'MERRA': {'path': '/disks/arctic5_raid/abarrett/MERRA/daily/{}/{:4d}/{:02d}',
                       'ffmt': 'MERRA???.prod.{:s}.assim.tavg1_2d_flx_Nx.{:s}??.nc4'},
-            'JRA55': {'path': '/disks/arctic5_raid/abarrett/JRA55/{}/{:4d}/{:02d}',
-                      'ffmt': 'fcst_phy2m.061_tprat.reg_tl319.{}.{:s}??.nc4'}
+            'JRA55': {'path': '/projects/arctic_scientist_data/Reanalysis/JRA55/daily/{}/{:4d}/{:02d}',
+                      'ffmt': 'JRA55.fcst_phy2m.{:s}.{:s}??.nc'}
             }
 
 vnamedict = {
@@ -24,7 +24,7 @@ vnamedict = {
                        'T2M': {'name': 'T2M', 'scale': 1.}},
              'MERRA': {'PRECIP': {'name': 'PRECTOT', 'scale': 1.}},
              'MERRA2': {'PRECIP': {'name': 'PRECTOT', 'scale': 1.}},
-             'JRA55': {'PRECIP': {'name': 'PRECTOT', 'scale': 1./8.}}
+             'JRA55': {'PRECIP': {'name': 'TOTPREC', 'scale': 1./8.}}
             }
 #             'MERRA2': {},
 #             'CFSR2': {},
