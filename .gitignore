@@ -1,0 +1,9 @@
+*.png
+*.csv
+*.dat
+*.nc*
+*.eps
+*.txt
+*.*~
+*.ipynb
+\#*
