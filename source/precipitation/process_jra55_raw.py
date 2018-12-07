@@ -19,7 +19,8 @@ rawfile = {'PRECTOT': 'fcst_phy2m.061_tprat.reg_tl319',
            'PRECSNO': 'fcst_phy2m.064_srweq.reg_tl319',
            'T2M': 'anl_surf.011_tmp.reg_tl319'}
 
-diri = '/disks/arctic5_raid/abarrett/JRA55'
+#diri = '/disks/arctic5_raid/abarrett/JRA55'
+diri = '/projects/arctic_scientist_data/Reanalysis/JRA55/daily'
 
 def make_fileout(varName, time):
     """
@@ -27,7 +28,7 @@ def make_fileout(varName, time):
     """
     date = pd.to_datetime(time.data)
     return os.path.join(diri, varName,
-                        str(date.year),
+                        date.strftime('%Y'),
                         date.strftime('%m'),
                         rawfile[varName]+'.'+varName+'.'+ \
                         date.strftime('%Y%m%d')+'.nc4')
@@ -59,7 +60,7 @@ def process_one_file(fili, varName, verbose=False):
     da = ds[vartable[varName]]
 
     if varName == 'T2M':
-        daysum = da.resample(initial_time0_hours='D').sum(
+        daysum = da.resample(initial_time0_hours='D').mean(
                dim='initial_time0_hours')
     else:
         daysum = da.resample(initial_time0_hours='D').sum(
@@ -71,7 +72,8 @@ def process_one_file(fili, varName, verbose=False):
         fileout = make_fileout(varName, time)
         if verbose:
             print( '   Writing data for {} to {}'.format(pd.to_datetime(time.data).strftime('%Y-%m-%d'),
-                                                      fileout) ) 
+                                                      fileout) )
+        return
         write_to_netcdf( daysum.sel(initial_time0_hours=time),
                          fileout )
     
@@ -79,9 +81,10 @@ def process_one_file(fili, varName, verbose=False):
 
 def get_fileList(varName):
 
-    return glob.glob( os.path.join(diri, 'raw',
-                                   rawpath[varName],
-                                   rawfile[varName]+'.*.nc.gz') )
+#    return glob.glob( os.path.join(diri, 'temp',
+#                                   rawpath[varName],
+#                                   rawfile[varName]+'.*.nc.gz') )
+    return glob.glob( os.path.join(diri, 'temp', rawfile[varName]+'.*.nc.gz') )
 
 def process_jra55_raw(varName, verbose=False):
 
@@ -91,7 +94,7 @@ def process_jra55_raw(varName, verbose=False):
     for f in fileList[1:]:
         if verbose: print( '   Processing {}'.format(f) )
         process_one_file(os.path.join(diri,f), varName, verbose=verbose)
-
+        break
 
 if __name__ == "__main__":
 
