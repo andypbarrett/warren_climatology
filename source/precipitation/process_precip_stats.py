@@ -3,22 +3,20 @@
 import xarray as xr
 import numpy as np
 
-def fileGlob(reanalysis):
+def fname(reanalysis):
     '''
     Generates a file glob for PRECIP_STATS
     '''
     
-    import os, glob
-    from constants import filepath
+    fnDict = {'CFSR': 'CFSR.flxf06.gdas.{:s}.{:s}.month.nc',
+              'CFSR2': 'CFSR2.flxf06.gdas.{:s}.{:s}.month.nc',
+              'MERRA': 'MERRA.prod.{:s}.assim.tavg1_2d_flx_Nx.{:s}.month.nc4',
+              'ERAI': 'era_interim.{:s}.{:s}.month.nc',
+              'JRA55': 'JRA55.fcst_phy2m.{:s}.{:s}.month.nc',
+              'MERRA2': 'MERRA2.tavg1_2d_flx_Nx.{:s}.{:s}.month.nc4',}
+    return fnDict[reanalysis]
 
-    globDict = {'CFSR': '/disks/arctic5_raid/abarrett/CFSR/PRATE/*/*/CFSR*.*.PRECIP_STATS.*.nc',
-                'CFSR2': '/disks/arctic5_raid/abarrett/CFSR2/PRATE/*/*/CFSR2.*.PRECIP_STATS.*.nc',
-                'MERRA': '/disks/arctic6_raid/MERRA/daily/PRECTOT/*/*/MERRA.prod.assim.tavg1_2d_lnd_Nx.PRECIP_STATS.*.month.nc',
-                'ERA-Interim': '/disks/arctic5_raid/abarrett/ERA_Interim/daily/PRECTOT/*/era_interim.PRECIP_STATS.*.month.nc',
-                'JRA55': '/disks/arctic5_raid/abarrett/JRA55/PRECTOT/*/*/fcst_phy2m.061_tprat.reg_tl319.PRECIP_STATS.*.month.nc4'}
-    return globDict[reanalysis]
-
-def filePath(reanalysis, date):
+def filePath(reanalysis, date, grid=None):
     '''
     Generates the file name for a PRECIP_STATS file for a given reanalysis
     
@@ -27,26 +25,25 @@ def filePath(reanalysis, date):
     '''
     import os, glob
     from constants import filepath, vnamedict
-    
+
     if (reanalysis == 'CFSR') & (date.year > 2010):
         path = os.path.join(filepath['CFSR2']['path'].format(vnamedict['CFSR2']['PRECIP']['name'],
                                                              date.year, date.month),
-                            filepath['CFSR2']['ffmt'].format('PRECIP_STATS', date.strftime('%Y%m')))
+                            fname('CFSR2').format('PRECIP_STATS', date.strftime('%Y%m')))
     else:
         path = os.path.join(filepath[reanalysis]['path'].format(vnamedict[reanalysis]['PRECIP']['name'],
                                                                 date.year, date.month),
-                            filepath[reanalysis]['ffmt'].format('PRECIP_STATS', date.strftime('%Y%m')))
+                            fname(reanalysis).format('PRECIP_STATS', date.strftime('%Y%m')))
         
-    if reanalysis == 'ERA-Interim': 
-        path = path.replace('day','month')
-    else:
-        path = path.replace('??.nc','.month.nc')
-
-    if reanalysis == 'MERRA': path = path.replace('MERRA???','MERRA')
+    if grid:
+        if (reanalysis == 'CFSR'):
+            path = path.replace('.nc', '.EASE_NH50km.nc')
+        else:
+            path = path.replace('.nc','.'+grid+'.nc')
     
     return path
 
-def make_fileList(reanalysis, year):
+def make_fileList(reanalysis, year, grid=None):
     '''
     Generates a list of files containing monthly statistics for the accumulation period
 
@@ -60,7 +57,7 @@ def make_fileList(reanalysis, year):
     end = dt.datetime(year,4,30)
     date = pd.date_range(start, end, freq='M')
     
-    return [filePath(reanalysis, d) for d in date], date
+    return [filePath(reanalysis, d, grid=grid) for d in date], date
 
 def daysinmonth(date):
     import calendar
@@ -99,13 +96,13 @@ def read_files_in_list(fileList, date, reanalysis):
 
     return ds
 
-def process_one_period(reanalysis, year, verbose=False):
+def process_one_period(reanalysis, year, grid=None, verbose=False):
     '''
     Calculate statistics for a single winter accumulation period
     '''
     import os
     
-    fileList, date = make_fileList(reanalysis, year)
+    fileList, date = make_fileList(reanalysis, year, grid=grid)
     if any([not os.path.exists(f) for f in fileList]):
         print ('%process_one_period: one or more files do not exist')
         return -1
@@ -136,7 +133,7 @@ def process_one_period(reanalysis, year, verbose=False):
 
     return newDs
 
-def make_outfile(reanalysis):
+def make_outfile(reanalysis, grid=None):
     from constants import filepath, vnamedict
     import os
     if reanalysis == 'ERA-Interim':
@@ -145,9 +142,11 @@ def make_outfile(reanalysis):
     else:
         diro = '/'.join(filepath[reanalysis]['path'].split('/')[:-2]).format(vnamedict[reanalysis]['PRECIP']['name'])
         filo = filepath[reanalysis]['ffmt'].format('PRECIP_STATS','x').replace('x??','accumulation.annual')
+    if grid:
+        filo.replace('.nc','{:s}.nc'.format(grid))
     return os.path.join(diro,filo)
 
-def process_precip_stats(reanalysis, start_year=1981, end_year=2017, verbose=False):
+def process_precip_stats(reanalysis, start_year=1981, end_year=2017, grid=None, verbose=False):
     import datetime as dt
 
     #ybeg = 1981
@@ -155,7 +154,7 @@ def process_precip_stats(reanalysis, start_year=1981, end_year=2017, verbose=Fal
 
     if verbose: print ('%  Processing {} PRECIP_STATS for {:d} to {:d}'.format(reanalysis, start_year, end_year))
     year = np.arange(start_year,end_year)
-    ds = xr.concat([process_one_period(reanalysis, y, verbose=verbose) for y in year], 'time')
+    ds = xr.concat([process_one_period(reanalysis, y, grid=grid, verbose=verbose) for y in year], 'time')
     ds.coords['time'] = [dt.datetime(y,1,1) for y in year]
     
     filo = make_outfile(reanalysis)
@@ -175,9 +174,11 @@ if __name__ == "__main__":
                         help='Year to start analysis')
     parser.add_argument('--end_year', metavar='end_year', type=int, default=2017,
                         help='Year to end analysis')
+    parser.add_argument('--grid', metavar='grid', type=str, default=None,
+                        help='Name of grid - None is native grid')
     parser.add_argument('-v', '--verbose', action='store_true')
     args = parser.parse_args()
 
-    process_precip_stats(args.reanalysis, start_year=args.start_year, end_year=args.end_year, verbose=args.verbose)
+    process_precip_stats(args.reanalysis, start_year=args.start_year, end_year=args.end_year, grid=args.grid, verbose=args.verbose)
     
 
