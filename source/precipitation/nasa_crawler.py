@@ -82,9 +82,12 @@ def crawl(catalog, session):
         print(e)
 
 
-def nasa_crawler(reanalysis, variable, time_resolution='hourly', year=None, month=None, filo=None, to_stdout=False):
+def nasa_crawler(catalog, filo=None, to_stdout=False):
+        #reanalysis, variable, time_resolution='hourly', year=None, month=None, filo=None, to_stdout=False):
     """
     Explores NASA catalogs for a given data product and returns a list of files.
+
+    ****** Currently takes xml catalog url as argument *****
 
     The search can be limited to year and month.
 
@@ -110,7 +113,7 @@ def nasa_crawler(reanalysis, variable, time_resolution='hourly', year=None, mont
     session = SessionWithHeaderRedirection(username, password)
 
     # Get the url of the file we wish to retrieve
-    catalog = get_product_url(reanalysis, time_resolution, variable, year=year)
+    #catalog = get_product_url(reanalysis, time_resolution, variable, year=year)
 
     # Get all datasets underneath the catalog url
     dataset_list = crawl(catalog, session)
@@ -137,21 +140,25 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Retrieves filelist for NASA reanalysis')
-    parser.add_argument('reanalysis', metavar='reanalysis', type=str,
-                        help='Name of NASA reanalysis: MERRA, MERRA2')
-    parser.add_argument('variable', metavar='variable', type=str,
-                        help='Name of variable to download: e.g. SLP')
+    parser.add_argument('catalog', type=str,
+                        help='URL for XML catalog page')
+#    parser.add_argument('reanalysis', metavar='reanalysis', type=str,
+#                        help='Name of NASA reanalysis: MERRA, MERRA2')
+#    parser.add_argument('variable', metavar='variable', type=str,
+#                        help='Name of variable to download: e.g. SLP')
     parser.add_argument('--fileout', '-o', type=str, action='store', default=None,
                         help='name of output file')
-    parser.add_argument('--year', '-y', type=int, action='store', default=None,
-                        help='year (YYYY) - stale')
-    parser.add_argument('--month', '-m', type=int, action='store', default=1,
-                        help='month (MM) - stale')
-    parser.add_argument('--time_resolution', '-tr', type=str, action='store', default='hourly',
-                        help='Time resolution for data (hourly, daily, monthly)')
+#    parser.add_argument('--year', '-y', type=int, action='store', default=None,
+#                        help='year (YYYY) - stale')
+#    parser.add_argument('--month', '-m', type=int, action='store', default=1,
+#                        help='month (MM) - stale')
+#    parser.add_argument('--time_resolution', '-tr', type=str, action='store', default='hourly',
+#                        help='Time resolution for data (hourly, daily, monthly)')
     parser.add_argument('--to_stdout', '-so', action='store_true')
     
     args = parser.parse_args()
 
-    nasa_crawler(args.reanalysis, args.variable, year=args.year, month=args.month,
-                 time_resolution=args.time_resolution, filo=args.fileout, to_stdout=args.to_stdout)
+#    nasa_crawler(args.reanalysis, args.variable, year=args.year, month=args.month,
+#                 time_resolution=args.time_resolution, filo=args.fileout, to_stdout=args.to_stdout)
+
+    nasa_crawler(args.catalog, filo=args.fileout, to_stdout=args.to_stdout)
