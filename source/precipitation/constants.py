@@ -4,7 +4,7 @@ filepath = {
             'ERAI': {'path': '/disks/arctic5_raid/abarrett/ERA_Interim/daily/{:s}/{:4d}/{:02d}',
                      'ffmt': 'era_interim.{}.{}??.nc'},
             'ERA5': {'path': '/projects/arctic_scientist_data/Reanalysis/ERA5/daily/{:s}/{:4d}/{:02d}',
-                     'ffmt': 'era5.single_level.TOTPREC.{}{}??.nc4'},
+                     'ffmt': 'era5.single_level.{}.{}??.nc4'},
             'MERRA2': {'path': '/disks/arctic5_raid/abarrett/MERRA2/daily/{}/{:4d}/{:02d}',
                        'ffmt': 'MERRA2_?00.tavg1_2d_flx_Nx.{}.{}??.nc4'},
             'CFSR': {'path': '/disks/arctic5_raid/abarrett/CFSR/{}/{:4d}/{:02d}',

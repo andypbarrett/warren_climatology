@@ -145,12 +145,13 @@ def read_month(fileGlob, reanalysis, variable):
         # To deal with 2016 ERA-Interim data
         if (reanalysis == 'ERA-Interim') & (date_from_filename(fileGlob).year > 2015):
             ds.rename({'tp': 'PRECTOT', 'latitude': 'lat', 'longitude': 'lon'}, inplace=True)
+        # To deal with ERA5 variable name - this needs to be fixed in processing 6h files
+        if (reanalysis == 'ERA5'):
+            ds.rename({'tp': 'TOTPREC'}, inplace=True)
+            
         ds[vname['name']] = ds[vname['name']] * vname['scale'] # Scale to mm and change units
 
         ds.set_coords(['latitude','longitude'], inplace=True)
-        
-        #if 'latitude' in ds: ds['latitude'] = ds['latitude'][0,:,:]
-        #if 'longitude' in ds: ds['longitude'] = ds['longitude'][0,:,:]
         
         if 'time' not in ds.coords.keys(): ds.coords['time'] = make_time_coordinate(fileGlob)
         

@@ -13,7 +13,8 @@ def fname(reanalysis):
               'MERRA': 'MERRA.prod.{:s}.assim.tavg1_2d_flx_Nx.{:s}.month.nc4',
               'ERAI': 'era_interim.{:s}.{:s}.month.nc',
               'JRA55': 'JRA55.fcst_phy2m.{:s}.{:s}.month.nc',
-              'MERRA2': 'MERRA2.tavg1_2d_flx_Nx.{:s}.{:s}.month.nc4',}
+              'MERRA2': 'MERRA2.tavg1_2d_flx_Nx.{:s}.{:s}.month.nc4',
+              'ERA5': 'era5.single_level.{:s}.{:s}.month.v2.nc4',}
     return fnDict[reanalysis]
 
 def filePath(reanalysis, date, grid=None):
@@ -38,6 +39,8 @@ def filePath(reanalysis, date, grid=None):
     if grid:
         if (reanalysis == 'CFSR'):
             path = path.replace('.nc', '.EASE_NH50km.nc')
+        elif (reanalysis == 'ERA5'):
+            path = path.replace('.v2.nc','.'+grid+'.v2.nc')
         else:
             path = path.replace('.nc','.'+grid+'.nc')
     
