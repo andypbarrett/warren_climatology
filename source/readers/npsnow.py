@@ -11,6 +11,11 @@ def read_precip(fili):
     """
     Reader for precipitation files contained in the NPSNOW data set
 
+    In NPSNOW precip files, dry-days have amount=-9.9 and type=-9.
+    These are set to 0.0 and 0 respectively.  This dry-days are distinct
+    from days with trace precipitation, which have amount 0.0 and non-zero 
+    type.
+
     Arguments
     ---------
     fili - file path
@@ -21,7 +26,7 @@ def read_precip(fili):
     """
 
     df = pd.read_csv(fili, header=None, delim_whitespace=True,
-                     na_values={'amount': -9.9, 'type': -9}, 
+                     #na_values={'amount': -9.9, 'type': -9}, 
                      names=['statid','month','day','year','amount','type'])
 
     isday = [row[1]['day'] <= \
@@ -34,6 +39,9 @@ def read_precip(fili):
                             int(row[1]['day']) ) \
                 for row in df.iterrows()] # Reset index to date
 
+    # Assumes zero precipitation/dry days are marked as -9.9, set to zero
+    df = df.where(df > 0., 0.0)
+    
     return df[['statid','amount','type']]
 
 def read_position(fili):
@@ -130,6 +138,132 @@ def read_snowstake(fili):
     f.close()
     
     return df
+
+def dateparser(x):
+    return dt.datetime.strptime('19{:s}'.format(x),'%Y %m %d')
+
+def datetimeparser(x):
+    #print ('*19{:s}*'.format(x))
+    #return None
+    return dt.datetime.strptime('19{:s}'.format(x),'%Y %m %d %H')
+
+def read_met(fili):
+    """
+    Reads meteorological data files.  These contain wind speed and
+    wind direction.
+    """
+
+    names = ['Station_ID',
+             'Year',
+             'Month',
+             'Day',
+             'Time',
+             'Latitude',
+             'Longitude',
+             'TAIR',
+             'RH',
+             'SLP',
+             'WDIR',
+             'WSPD',
+             'TOTCLD',
+             'LOWCLD',
+             'TSURF',]
+    
+    df = pd.read_csv(fili, sep='\s+', header=None, names=names, na_values=[9999, 9999.0],
+                     parse_dates={'date': ['Year','Month','Day','Time']}, index_col='date',
+                     date_parser=datetimeparser)
+    return df
+    
+    
+def read_combined(fili):
+    """
+    Reads a combined file of drifting station observations
+    """
+
+    names = ['Station_ID',
+             'Year',
+             'Month',
+             'Day',
+             'Latitude',
+             'Longitude',
+             'TAIR',
+             'RH',
+             'SLP',
+             'UWIND',
+             'VWIND',
+             'TOTCLD',
+             'LOWCLD',
+             'TSURF',
+             'KDIFF',
+             'KDIR',
+             'KGLOBAL',
+             'KREF',
+             'ALBEDO',
+             'QNET',
+             'PRECTOT',
+             'PTYPE',
+             'SNODEP_AVG',
+             'SNODEN_AVG',
+             'SNOLIQ_AVG',
+             'SNODEP_STK',]
+    names.extend(['SNODEN{:02d}'.format(i) for i in range(1,11)])
+    names.extend(['SNOLIQ{:02d}'.format(i) for i in range(1,11)])
+    names.extend(['SNODEP{:03d}'.format(i) for i in range(1,101)])
+
+    df = pd.read_csv(fili, header=None, names=names, sep='\s+', na_values=9999.0,
+                     parse_dates={'date': ['Year','Month','Day']}, index_col='date',
+                     date_parser=dateparser)
+
+    return df
+
+def plot_trajectory(df):
+    """
+    Dummy routine for plotting drifting station trajectory
+    """
+    coords = ll2xy( df, map_proj)
+    xy = pd.DataFrame({'x': coords[:,0], 'y': coords[:,1]}, index=df.index)
+    xyMon = xy.resample('M').mean()
+    ax = plt.subplot(projection=map_proj)
+    ax.add_feature(cfeature.LAND)
+    ax.plot(coords[:,0], coords[:,1])
+    ax.plot(xyMon['x'].values, xyMon['y'].values, 'ro')
+    plt.show()
+
+def read_yang(fili):
+    """
+    Reads Excel file containing Yang corrected monthly precipitation
+    
+    Arguments
+    ---------
+    fili - file path
+    
+    Returns
+    -------
+    Pandas dataframe containing monthly precipitation
+    """
+    df = pd.read_excel(fili, sheet_name='monthly-all', header=0, skiprows=[1,2,3], 
+                   na_values='-', usecols=14)
+    df = df.dropna(how='all')
+    return df
+
+def read_yang_updated(fili):
+    """
+    Reads csv file containing Yang precipitation with updated coordinates
+
+    Arguments
+    ---------
+    fili - file path
+
+    Returns
+    -------
+    Pandas data frame containing monthly precipitation
+    """
+    df = pd.read_csv(fili, header=0, parse_dates=True)
+    df.rename({'Unnamed: 0':'Date'}, axis=1, inplace=True)
+    df['Date'] = [dt.datetime.strptime(t,'%Y-%m-%d') for t in df.Date.values]
+    return df
+
+
 
 
     
