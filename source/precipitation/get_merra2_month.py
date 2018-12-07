@@ -1,5 +1,6 @@
 # Gets MERRA2 variables
 import datetime as dt
+import numpy as np
 
 def get_dataset(url):
 
@@ -14,28 +15,52 @@ def get_dataset(url):
     
     return dataset
 
-def dataset_var_to_DataArray(dataset, varname):
+def dataset_var_to_DataArray(dataset, varname, url=None,
+                             level=[1000., 925., 850., 700., 500., 300.]):
     
     import xarray as xr
+    import datetime as dt
+    
+    from collections import OrderedDict
     
     var = dataset[varname]
     time = dataset['time']
     lat  = dataset['lat']
     lon  = dataset['lon']
 
-    da = xr.DataArray(var[:,:,:], coords=[time[:],lat[:],lon[:]], dims=['time','lat','lon'],
-                      attrs=var.attributes, name=varname)
-    da['time'].attrs = time.attributes
-    da['lat'].attrs = lat.attributes
-    da['lon'].attrs = lon.attributes
+    print (var.ndim)
+    
+    if var.ndim > 3:
+        print ('HERE')
+        lev = dataset['lev']
+        da = xr.DataArray(var[:], coords=[time[:],lev[:],lat[:],lon[:]],
+                          dims=['time','lev','lat','lon'],
+                          attrs=var.attributes, name=varname)
+        da['lev'].attrs = OrderedDict([('long_name', lev.attributes['long_name']),
+                                       ('units', lev.attributes['units'])])
+        if level: da = da.sel(lev=level)
+    else:
+        da = xr.DataArray(var[:], coords=[time[:],lat[:],lon[:]],
+                          dims=['time','lat','lon'],
+                          attrs=var.attributes, name=varname)
+    da['lat'].attrs = OrderedDict([('long_name', 'latitude'), ('units', 'degrees_north')])
+    da['lon'].attrs = OrderedDict([('long_name', 'longitude'), ('units', 'degrees_east')])
+    
 
     # To avoid conflicts between _FillValue and missing_value attributes when file is read
     da.attrs.pop('fmissing_value')
     da.attrs.pop('missing_value')
-    
-    return da
 
-def make_output_path(url, varName, root_diro='/disks/arctic5_raid/abarrett/MERRA2/daily'):
+    if (np.array(da.shape) == 1).any(): da = da.squeeze(drop=True)
+
+    ds = da.to_dataset()
+    ds.attrs['created_by'] = 'Andrew P. Barrett <apbarret@nsidc.org'
+    ds.attrs['created'] = dt.datetime.now().strftime('%Y%m%d')
+    if url: ds.attrs['source'] = url
+    
+    return ds
+
+def make_output_path(url, varName, root_diro='/disks/arctic5_raid/abarrett/MERRA2/monthly'):
     '''Generates a path for the output netCDF4 file'''
     import os
     import datetime as dt
@@ -45,7 +70,8 @@ def make_output_path(url, varName, root_diro='/disks/arctic5_raid/abarrett/MERRA
     tmp.insert(2,varName) # insert varName in original filename
 
     # Extract date and create datetime object so year and month can be extracted
-    date = dt.datetime.strptime(tmp[3],'%Y%m%d')
+    #date = dt.datetime.strptime(tmp[3],'%Y%m%d')
+    date = parse_date(tmp[3])
     
     return os.path.join(root_diro, varName, date.strftime('%Y'),
                         date.strftime('%m'), '.'.join(tmp))
@@ -130,7 +156,7 @@ def subset_urlList(urlList, begin, end):
 
     return dummy[(date > dbeg) & (date <= dend)]
     
-def main(listFile, varList=None, verbose=False, overwrite=False, begin=None, end=None):
+def main(listFile, varList=None, verbose=False, overwrite=False, begin=None, end=None, level=None):
     '''For a given MERRA2 dataset, extract variables (supplied as list) and write to
        to files using defined directory structure
     
@@ -157,16 +183,15 @@ def main(listFile, varList=None, verbose=False, overwrite=False, begin=None, end
 
         for varName in varList:
 
-            if verbose: print ('   Extracting daily {} from dataset...'.format(varName))
-            var = dataset_var_to_DataArray(dataset, varName)
+            if verbose: print ('   Extracting {} from dataset...'.format(varName))
+            var = dataset_var_to_DataArray(dataset, varName, url=url)
 
-            print (var)
-            return
-        
             filo = make_output_path(url, varName)
             if verbose: print ('   Writing {} to {}'.format(varName,filo))
             write_to_netcdf4(var, filo)
 
+    return
+        
 if __name__ == '__main__':
 
     import argparse

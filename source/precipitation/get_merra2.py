@@ -1,6 +1,9 @@
 # Gets MERRA2 variables
 
-def get_dataset(url):
+import merra2_utilities as m2util
+import datetime as dt
+
+def get_dataset_old(url):
 
     from pydap.client import open_url                                  
     from pydap.cas.urs import setup_session                            
@@ -92,48 +95,11 @@ def write_to_netcdf4(var, filo):
     try:
         var.to_netcdf(filo)
     except:
-        print '%write_to_netcdf4: Cannot create {}'.format(filo)
+        print ('%write_to_netcdf4: Cannot create {:}'.format(filo))
         
     return
 
-def get_urlList(list_file):
-    '''
-    Gets a list of url for the MERRA2 OpenDAP server
-
-    This is a quick and dirty fix to the problem of querying the server for a list of 
-    files for a given dataset.  For now, I generate the list using the Subsetter and
-    extract file names from that list.
-    '''
-    import os
-    import re
-    import datetime as dt
-
-    odapdir = 'https://goldsmr4.gesdisc.eosdis.nasa.gov:443/opendap/MERRA2/M2T1NXFLX.5.12.4'
-    
-    with open(list_file) as f:
-        lines = f.readlines()
-
-    filenames = []
-    for l in lines[1:]:
-        basename, datestr = re.search('LABEL=(MERRA2_\d{3}.tavg1_2d_flx_Nx.(\d{8}).)SUB', l).groups()
-        date = dt.datetime.strptime(datestr, '%Y%m%d')
-        filenames.append(os.path.join(odapdir, date.strftime('%Y'), date.strftime('%m'), basename+'nc4'))
-    
-    return filenames
-    
-def subset_urlList(urlList):
-    import datetime as dt
-    import re
-    import numpy as np
-    
-    m = re.compile('\.(\d{8})\.')
-    date = np.array([dt.datetime.strptime(m.search(f).groups()[0],'%Y%m%d') for f in urlList])
-
-    dummy = np.array(urlList)
-
-    return dummy[date > dt.datetime(2010,5,1)]
-    
-def main(verbose=False, overwrite=False):
+def main(listFile, varList, start_date=None, end_date=None, verbose=False, overwrite=False):
     '''For a given MERRA2 dataset, extract variables (supplied as list) and write to
        to files using defined directory structure
     
@@ -143,30 +109,48 @@ def main(verbose=False, overwrite=False):
     '''
     
     # generate a url or list of urls OR date range
-    listFile = '/disks/arctic5_raid/abarrett/MERRA2/daily/M2T1NXFLX_V5.12.4_links_20171129_142234.txt'
-    urlList = get_urlList(listFile)
-    varList = ['PRECTOT'] #, 'PRECTOTCORR']
+    urlList = m2util.get_urlList(listFile)
+    urlList = m2util.subset_urlList(urlList, start_date, end_date)
 
-    # HARDCODED #
-    # Subset urlList to files after 20100501
-    urlList = subset_urlList(urlList)
-    
     # Loop through urls
     for url in urlList:
         
         # Get openDAP dataset
-        if verbose: print '   Getting {}'.format(url)
-        dataset = get_dataset(url)
+        if verbose: print ('   Getting {}'.format(url))
+        dataset = m2util.get_dataset(url)
         
         for varName in varList:
 
-            if verbose: print '   Extracting daily {} from dataset...'.format(varName)
-            varHr = dataset_var_to_DataArray(dataset, varName)
-            varDy = hour2day(varHr)
+            if verbose: print ( '   Extracting daily {} from dataset...'.format(varName) )
+            #varHr = dataset_var_to_DataArray(dataset, varName)
+            varHr = m2util.pydap2xarray(dataset, varName)
+            varDy = m2util.hour2day(varHr)
 
+            dsDy = varDy.to_dataset()
+            dsDy.attrs['created_by'] = 'Andrew P. Barrett <apbarret@nsidc.org'
+            dsDy.attrs['created'] = dt.datetime.now().strftime('%Y%m%d')
+            if url: dsDy.attrs['source'] = url
+    
             filo = make_output_path(url, varName)
-            if verbose: print '   Writing {} to {}'.format(varName,filo)
-            write_to_netcdf4(varDy, filo)
+            if verbose: print ( '   Writing {} to {}'.format(varName,filo) )
+            write_to_netcdf4(dsDy, filo)
 
 if __name__ == '__main__':
-    main(verbose=True, overwrite=True)
+
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Downloads data files in listFile')
+    parser.add_argument('listFile', type=str, help='File containing URLs for data')
+    parser.add_argument('varList', type=str, nargs='+',
+                        help='Variable or list of variables to extract')
+    parser.add_argument('--start_date', '-sd', type=str, action='store', default=None,
+                        help='Date of first file to download')
+    parser.add_argument('--end_date', '-ed', type=str, action='store', default=None,
+                        help='Date of last file to download')
+    parser.add_argument('--verbose', '-v', action='store_true')
+    parser.add_argument('--overwrite', action='store_false')
+
+    args = parser.parse_args()
+
+    main(args.listFile, args.varList, start_date=args.start_date, end_date=args.end_date,
+         verbose=args.verbose, overwrite=args.overwrite)
