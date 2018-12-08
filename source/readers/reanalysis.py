@@ -11,7 +11,8 @@ REANALYSIS_GLOB_PSM = {'CFSR': '/disks/arctic5_raid/abarrett/CFSR*/TOTPREC/????/
                        'MERRA': '/disks/arctic5_raid/abarrett/MERRA/daily/PRECTOT/????/??/MERRA.prod.PRECIP_STATS.assim.tavg1_2d_flx_Nx.??????.month.Nh50km.nc4',
                        'MERRA2': '/disks/arctic5_raid/abarrett/MERRA2/daily/PRECTOT/????/??/MERRA2.tavg1_2d_flx_Nx.PRECIP_STATS.??????.month.Nh50km.nc4',
                        'ERAI': '/disks/arctic5_raid/abarrett/ERA_Interim/daily/PRECTOT/????/??/era_interim.PRECIP_STATS.??????.month.Nh50km.nc',
-                       'JRA55': '/projects/arctic_scientist_data/Reanalysis/JRA55/daily/TOTPREC/????/??/JRA55.fcst_phy2m.PRECIP_STATS.??????.month.Nh50km.nc'}
+                       'JRA55': '/projects/arctic_scientist_data/Reanalysis/JRA55/daily/TOTPREC/????/??/JRA55.fcst_phy2m.PRECIP_STATS.??????.month.Nh50km.nc',
+                       'ERA5': '/projects/arctic_scientist_data/Reanalysis/ERA5/daily/TOTPREC/????/??/era5.single_level.PRECIP_STATS.??????.month.Nh50km.v2.nc4'}
 
 def date_from_filename(f):
      return dt.datetime.strptime(re.search('\d{6}', f).group(), '%Y%m')
