@@ -44,7 +44,7 @@ def read_precip(fili):
     
     return df[['statid','amount','type']]
 
-def read_position(fili):
+def read_position(fili, original=False):
     """
     Reader for position files contained in the NPSNOW dataset
 
@@ -52,13 +52,24 @@ def read_position(fili):
     ---------
     fili - file path
 
+    Keywords
+    --------
+    original - If true, parses file assuming original format with header
+               bool default: False
+
     Returns
     -------
     Pandas dataframe containing drifting station positions
     """
 
+    if original:
+        skiprows = 9
+    else:
+        skiprows = None
+    
     df = pd.read_csv(fili, header=None, delim_whitespace=True,
-                     names=['year','month','day','hour','lat','lon'])
+                     names=['year','month','day','hour','lat','lon'],
+                     skiprows=skiprows)
     df['hour'][df['hour'] == 24] = 0 #There is no hour 24
     if (df['hour'] > 24).any():
         df['hour'][df['hour'] > 24] = 12
