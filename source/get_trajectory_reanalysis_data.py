@@ -94,7 +94,7 @@ def main():
     it, ix, iy = trajectory_to_indices(trajectory)
 
     # Loop through reanalyses
-    for ir, reanalysis in enumerate(['ERAI','CFSR','MERRA','MERRA2','JRA55']):
+    for ir, reanalysis in enumerate(['ERAI','CFSR','MERRA','MERRA2','JRA55','ERA5']):
         
         # Read reanalysis precip stats data cube
         print ('Getting precip_stats for '+reanalysis)
