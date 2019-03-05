@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import datetime as dt
 import pandas as pd
 
+from plotting.reanalysis import colors
+
 import os
 
 fili = {'CFSR': '/disks/arctic5_raid/abarrett/CFSR/PRATE/CFSR.flxf06.gdas.PRECIP_STATS.accumulation.annual.Nh50km.AOSeries.nc',
