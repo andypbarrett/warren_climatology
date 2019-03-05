@@ -5,5 +5,9 @@
 *.eps
 *.txt
 *.*~
-*.ipynb
+.ipynb_checkpoints
+__pycache__
+*py[cod]
+
+#*.ipynb
 \#*
