@@ -109,7 +109,7 @@ def sample_grid(variable='snow_depth', month=None):
     my_func = {'snow_depth': snow_depth,
                'swe': swe}
 
-    lat, lon = np.linspace(70.,90.,20), np.linspace(0.,359.,360)
+    lat, lon = np.linspace(65.,90.,20), np.linspace(0.,359.,360)
     
     if not month:
         month = np.arange(1,13)
@@ -119,11 +119,11 @@ def sample_grid(variable='snow_depth', month=None):
     x, y = np.meshgrid(lon, lat)
 
     if month.size == 1:
-        da = xr.DataArray(my_func[ftype](x,y,month),
+        da = xr.DataArray(my_func[variable](x,y,month),
                           coords={'lat': lat, 'lon': lon},
                           dims=['lat', 'lon'])
     else:
-        da = xr.DataArray([my_func[ftype](x, y, m) for m in month],
+        da = xr.DataArray([my_func[variable](x, y, m) for m in month],
                            coords={'month': month, 'lat': lat, 'lon': lon},
                            dims=['month', 'lat', 'lon'])
     return da
@@ -197,10 +197,10 @@ def plot_snow_depth(da, title='', add_colorbar=True, pngfile=None):
     da - xarray DataArray
     """
 
-    ax = plt.add_axes(projection=ccrs.NorthPolarStereo())
-    ax.set_extent([-180.,180.,75.,90.], ccrs.PlateCarree())
+    ax = plt.subplot(projection=ccrs.NorthPolarStereo())
+    ax.set_extent([0,360,75.,90.], ccrs.PlateCarree())
 
-    cs = ax.contourf(da.x, da.y, da, levels=np.arange(0,48,2), extend='both')
+    cs = ax.contourf(da.lon, da.lat, da, levels=np.arange(0,48,2), extend='both')
     cs2 = ax.contour(cs, levels=cs.levels, colors='k')
 
     ax.clabel(cs2, inline=1, fontsize=10, fmt='%2.0f')
